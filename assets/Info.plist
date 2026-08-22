@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>Mumble</string>
+	<key>CFBundleDisplayName</key>
+	<string>Mumble</string>
+	<!-- Deliberately space-free so process management targets only this app. -->
+	<key>CFBundleExecutable</key>
+	<string>Mumble</string>
+	<!-- This bundle has its own TCC identity and preferences domain. -->
+	<key>CFBundleIdentifier</key>
+	<string>com.micahcrandell.mumble</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<!-- The custom scheme gives local scripts a small, private control surface. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.micahcrandell.mumble</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mumble</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSMinimumSystemVersion</key>
+	<string>26.0</string>
+	<!-- Agent app: the menu bar item and hotkey remain active while the main window is closed. -->
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mumble listens while you hold the push-to-talk key so it can turn your speech into text.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Mumble transcribes your speech on-device to insert text where you're typing.</string>
+</dict>
+</plist>

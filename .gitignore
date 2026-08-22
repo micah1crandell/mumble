@@ -1,0 +1,11 @@
+# macOS build
+**/.build/
+**/.swiftpm/
+*.app/
+*.xcuserdatad
+.DS_Store
+
+# Local ASR model weights are large and managed by the app itself.
+models/
+*.onnx
+*.nemo

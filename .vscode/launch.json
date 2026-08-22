@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mumble}",
+            "name": "Debug Mumble",
+            "target": "Mumble",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Mumble"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:mumble}",
+            "name": "Release Mumble",
+            "target": "Mumble",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Mumble"
+        }
+    ]
+}

@@ -1,0 +1,162 @@
+{
+  "$comment": [
+    "Shared behavioral contract for the dictionary correction pass.",
+    "",
+    "The macOS app implements this logic in Swift.",
+    "Independent implementations drift. This file keeps every implementation honest:",
+    "each one must produce exactly the stated output for every case below.",
+    "",
+    "Rules under test:",
+    "  1. Whole matches only  - a rule must never bite into a longer word.",
+    "  2. Case-insensitive    - the trigger matches in any case; output is verbatim.",
+    "  3. Longest match first - a longer trigger wins over a shorter overlapping one.",
+    "  4. Glued words match   - parts may be separated by spaces or hyphens, including none.",
+    "  5. Disabled is inert   - a disabled entry changes nothing."
+  ],
+  "version": 1,
+  "cases": [
+    {
+      "name": "basic phrase replacement",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "I write morning pages every day.",
+      "expected": "I write Morning Pages every day.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "glued together with no separator",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "I write MorningPages every day.",
+      "expected": "I write Morning Pages every day.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "joined by a hyphen",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "I write Morning-Pages every day.",
+      "expected": "I write Morning Pages every day.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "multiple spaces between parts",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "I write morning  pages every day.",
+      "expected": "I write Morning Pages every day.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "trigger matches regardless of case",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "MORNING PAGES are useful.",
+      "expected": "Morning Pages are useful.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "must not corrupt a longer word that starts the same way",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "Morningstar is bright and morningpagesx is not a phrase.",
+      "expected": "Morningstar is bright and morningpagesx is not a phrase.",
+      "expectedCorrections": []
+    },
+    {
+      "name": "must not touch either ordinary word alone",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "The morning is clear and the pages are ready.",
+      "expected": "The morning is clear and the pages are ready.",
+      "expectedCorrections": []
+    },
+    {
+      "name": "longest trigger wins over a shorter overlapping one",
+      "entries": [
+        {"kind": "correction", "hear": "morning", "write": "AM"},
+        {"kind": "correction", "hear": "morning pages", "write": "Journal Pages"}
+      ],
+      "input": "morning pages",
+      "expected": "Journal Pages",
+      "expectedCorrections": [{"to": "Journal Pages", "count": 1}]
+    },
+    {
+      "name": "counts repeated hits",
+      "entries": [{"kind": "correction", "hear": "mornin pages", "write": "Morning Pages"}],
+      "input": "mornin pages, then mornin pages again, and mornin pages.",
+      "expected": "Morning Pages, then Morning Pages again, and Morning Pages.",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 3}]
+    },
+    {
+      "name": "punctuation is a boundary",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "(morning pages), \"morning pages\"; morning pages!",
+      "expected": "(Morning Pages), \"Morning Pages\"; Morning Pages!",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 3}]
+    },
+    {
+      "name": "a possessive still matches",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "morning pages' rhythm",
+      "expected": "Morning Pages' rhythm",
+      "expectedCorrections": [{"to": "Morning Pages", "count": 1}]
+    },
+    {
+      "name": "a disabled entry changes nothing",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages", "isEnabled": false}],
+      "input": "I write morning pages every day.",
+      "expected": "I write morning pages every day.",
+      "expectedCorrections": []
+    },
+    {
+      "name": "a term entry never rewrites text",
+      "entries": [{"kind": "term", "write": "Mumble"}],
+      "input": "mumble makes dictation useful.",
+      "expected": "mumble makes dictation useful.",
+      "expectedCorrections": []
+    },
+    {
+      "name": "single word trigger is honored when asked for",
+      "entries": [{"kind": "correction", "hear": "mumbel", "write": "Mumble"}],
+      "input": "I opened Mumbel today.",
+      "expected": "I opened Mumble today.",
+      "expectedCorrections": [{"to": "Mumble", "count": 1}]
+    },
+    {
+      "name": "several independent rules in one pass",
+      "entries": [
+        {"kind": "correction", "hear": "mornin pages", "write": "Morning Pages"},
+        {"kind": "correction", "hear": "signal lab", "write": "Signal Lab"}
+      ],
+      "input": "mornin pages in signal lab.",
+      "expected": "Morning Pages in Signal Lab.",
+      "expectedCorrections": [
+        {"to": "Morning Pages", "count": 1},
+        {"to": "Signal Lab", "count": 1}
+      ]
+    },
+    {
+      "name": "empty input is left alone",
+      "entries": [{"kind": "correction", "hear": "morning pages", "write": "Morning Pages"}],
+      "input": "",
+      "expected": "",
+      "expectedCorrections": []
+    },
+    {
+      "name": "replacement containing regex metacharacters is literal",
+      "entries": [{"kind": "correction", "hear": "c plus plus", "write": "C++"}],
+      "input": "I write c plus plus.",
+      "expected": "I write C++.",
+      "expectedCorrections": [{"to": "C++", "count": 1}]
+    },
+    {
+      "name": "trigger replacement is literal",
+      "entries": [{"kind": "correction", "hear": "dot net", "write": ".NET 8"}],
+      "input": "Built with dot net.",
+      "expected": "Built with .NET 8.",
+      "expectedCorrections": [{"to": ".NET 8", "count": 1}]
+    },
+    {
+      "name": "accented trigger matches decomposed input",
+      "$comment": "The input is deliberately NFD to cover macOS text normalization.",
+      "entries": [{"kind": "correction", "hear": "café racer", "write": "Café Racer"}],
+      "input": "a café racer bike",
+      "expected": "a Café Racer bike",
+      "expectedCorrections": [{"to": "Café Racer", "count": 1}]
+    }
+  ]
+}
